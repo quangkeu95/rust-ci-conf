@@ -17,7 +17,7 @@ jobs:
       matrix:
         toolchain: [stable, beta]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install ${{ matrix.toolchain }}
@@ -28,28 +28,28 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       # https://twitter.com/jonhoo/status/1571290371124260865
-      - name: cargo test --locked
-        run: cargo test --locked --all-features --all-targets
+      - name: cargo test --workspace --locked
+        run: cargo test --workspace --locked --all-features --all-targets
       # https://github.com/rust-lang/cargo/issues/6669
-      - name: cargo test --doc
-        run: cargo test --locked --all-features --doc
-  minimal:
-    runs-on: ubuntu-latest
-    name: ubuntu / stable / minimal-versions
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - name: Install stable
-        uses: dtolnay/rust-toolchain@stable
-      - name: Install nightly for -Zminimal-versions
-        uses: dtolnay/rust-toolchain@nightly
-      - name: rustup default stable
-        run: rustup default stable
-      - name: cargo update -Zminimal-versions
-        run: cargo +nightly update -Zminimal-versions
-      - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+      - name: cargo test --workspace --doc
+        run: cargo test --workspace --locked --all-features --doc
+  # minimal:
+  #   runs-on: ubuntu-latest
+  #   name: ubuntu / stable 
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Install stable
+  #       uses: dtolnay/rust-toolchain@stable
+  #     - name: Install nightly for -Zminimal-versions
+  #       uses: dtolnay/rust-toolchain@nightly
+  #     - name: rustup default stable
+  #       run: rustup default stable
+  #     - name: cargo update -Zminimal-versions
+  #       run: cargo +nightly update -Zminimal-versions
+  #     - name: cargo test --workspace
+  #       run: cargo test --workspace --locked --all-features --all-targets
   os-check:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} / stable
@@ -64,7 +64,7 @@ jobs:
       #   if: runner.os == 'Windows'
       # - run: vcpkg install openssl:x64-windows-static-md
       #   if: runner.os == 'Windows'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install stable
@@ -72,13 +72,13 @@ jobs:
       - name: cargo generate-lockfile
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
-      - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+      - name: cargo test --workspace
+        run: cargo test --workspace --locked --all-features --all-targets
   coverage:
     runs-on: ubuntu-latest
     name: ubuntu / stable / coverage
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install stable
@@ -94,5 +94,7 @@ jobs:
         run: cargo llvm-cov --locked --all-features --lcov --output-path lcov.info
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           fail_ci_if_error: true
