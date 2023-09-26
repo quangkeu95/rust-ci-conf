@@ -29,6 +29,5 @@ git fetch ci
 git merge --allow-unrelated ci/main
 ```
 
-# Acknowledges:
-[JonHoo Rust CI Config](git merge --allow-unrelated ci/main
-)
+## Acknowledges:
+[JonHoo Rust CI Config](https://github.com/jonhoo/rust-ci-conf)
